@@ -60,7 +60,7 @@ public class VideoService {
         return VideoDto.toDto(savedVideo, uploader.getNickname());
     }
 
-    // 비디오 좋아요 및 취소 기능
+    // 로그인 사용자의 비디오 좋아요 및 취소 기능
     public void likeVideo(Long videoId){
 
         // 로그인한 member 정보 가져오기
@@ -71,7 +71,7 @@ public class VideoService {
         Member loginMember = memberRepository.findOneByLoginId(username).get(); // 로그인한 member
         Video foundVideo = videoRepository.findOneById(videoId).get(); // videoId에 해당하는 video
 
-        // 로그인한 멤버가 해당 비디오를 이전에 좋아요 누른 적이 있다면
+        // 로그인한 멤버와 해당 비디오와의 관계(시청 or 업로드 or 좋아요)가 존재한다면
         if (memberVideoRepository.existsByMemberAndVideo(loginMember, foundVideo)){
 
             // 로그인한 member와 foundVideo간의 관계를 나타내는 foundMemberVideo
@@ -87,7 +87,7 @@ public class VideoService {
                 foundVideo.setLikes(foundVideo.getLikes() - 1); // 해당 비디오 좋아요 - 1
             }
         }
-        else{
+        else{ // 관계(시청 or 업로드 or 좋아요)가 존재하지 않는다면
             // member와 video 정보 이용하여 memberVideo 객체 생성
             MemberVideo memberVideo = MemberVideo.createMemberVideo(loginMember, foundVideo);
             memberVideo.setLiked(true);
@@ -97,41 +97,96 @@ public class VideoService {
         }
     }
 
+    // 한식 리스트 가져오기
     public List<SimpleVideoDto> getKorVideoList(){
         return videoRepository.findByCategory("KOR").stream()
                 .map(v -> new SimpleVideoDto(v))
                 .collect(toList());
     }
 
+    // 일식 리스트 가져오기
     public List<SimpleVideoDto> getJpnVideoList(){
         return videoRepository.findByCategory("JPN").stream()
                 .map(v -> new SimpleVideoDto(v))
                 .collect(toList());
     }
 
+    // 중식 리스트 가져오기
     public List<SimpleVideoDto> getChnVideoList(){
         return videoRepository.findByCategory("CHN").stream()
                 .map(v -> new SimpleVideoDto(v))
                 .collect(toList());
     }
 
+    // 양식 리스트 가져오기
     public List<SimpleVideoDto> getWesVideoList(){
         return videoRepository.findByCategory("WES").stream()
                 .map(v -> new SimpleVideoDto(v))
                 .collect(toList());
     }
 
+    // 기타 음식 리스트 가져오기
     public List<SimpleVideoDto> getEtcVideoList(){
         return videoRepository.findByCategory("ETC").stream()
                 .map(v -> new SimpleVideoDto(v))
                 .collect(toList());
     }
 
+    // 비디오 상세 정보 가져오기
     public DetailVideoDto getVideoDetail(Long videoId){
         Video detailVideo = videoRepository.findOneById(videoId).get();
         MemberVideo memberVideo = memberVideoRepository.findOneByVideo(detailVideo).get();
         String uploader = memberVideo.getMember().getNickname();
 
         return DetailVideoDto.toDto(detailVideo, uploader, memberVideo.getLastPlaytime());
+    }
+
+    // 로그인 사용자의 비디오 시청 (마지막 시청 시간 저장)
+    public void watchVideo(Long videoId, int lastPlaytime) {
+
+        // 로그인한 member 정보 가져오기
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetails userDetails = (UserDetails) principal;
+        String username = userDetails.getUsername();
+
+        Member loginMember = memberRepository.findOneByLoginId(username).get(); // 로그인한 member
+        Video foundVideo = videoRepository.findOneById(videoId).get(); // videoId에 해당하는 video
+
+        // 로그인한 멤버와 해당 비디오와의 관계(시청 or 업로드 or 좋아요)가 존재한다면
+        if (memberVideoRepository.existsByMemberAndVideo(loginMember, foundVideo)){
+
+            // 로그인한 member와 foundVideo간의 관계를 나타내는 foundMemberVideo
+            MemberVideo foundMemberVideo = memberVideoRepository.findOneByMemberAndVideo(loginMember, foundVideo).get();
+
+            // 해당 로그인 member가 시청한 적이 없다면
+            if (foundMemberVideo.isWatched() == false){
+                foundMemberVideo.setWatched(true);
+            }
+
+            // 마지막 시청 시간이 해당 비디오의 런타임보다 이전이라면
+            if (lastPlaytime < foundVideo.getRuntime()){
+                foundMemberVideo.setLastPlaytime(lastPlaytime);
+            }
+            else{
+                foundMemberVideo.setLastPlaytime(0);
+            }
+        }
+        else{ // 관계(시청 or 업로드 or 좋아요)가 존재하지 않는다면
+
+            // member와 video 정보 이용하여 memberVideo 객체 생성
+            MemberVideo memberVideo = MemberVideo.createMemberVideo(loginMember, foundVideo);
+            memberVideo.setWatched(true);
+
+            // 마지막 시청 시간이 해당 비디오의 런타임보다 이전이라면
+            if (lastPlaytime < foundVideo.getRuntime()){
+                memberVideo.setLastPlaytime(lastPlaytime);
+            }
+            else{
+                memberVideo.setLastPlaytime(0);
+            }
+
+            // memberVideo 저장
+            memberVideoRepository.save(memberVideo);
+        }
     }
 }

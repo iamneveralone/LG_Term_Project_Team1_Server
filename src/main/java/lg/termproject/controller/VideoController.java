@@ -3,9 +3,11 @@ package lg.termproject.controller;
 import jakarta.validation.Valid;
 import lg.termproject.dto.CategoryVideoDto;
 import lg.termproject.dto.DetailVideoDto;
+import lg.termproject.dto.LastPlaytimeDto;
 import lg.termproject.dto.VideoDto;
 import lg.termproject.service.VideoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.RequestEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -43,5 +45,11 @@ public class VideoController {
     @GetMapping("/video/detail/{videoId}")
     public DetailVideoDto getVideoDetail(@PathVariable Long videoId){
         return videoService.getVideoDetail(videoId);
+    }
+
+    // 로그인한 사용자의 비디오 시청 (특정 비디오 마지막 시청 시간 저장)
+    @PostMapping("/video/watch/{videoId}")
+    public void watchVideo(@PathVariable Long videoId, @RequestBody LastPlaytimeDto lastPlaytimeDto){
+        videoService.watchVideo(videoId, lastPlaytimeDto.getLastPlaytime());
     }
 }
