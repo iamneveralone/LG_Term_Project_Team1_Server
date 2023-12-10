@@ -23,4 +23,15 @@ public class VideoListController {
                 .ETC(videoListService.getWatchEtcVideoList())
                 .build();
     }
+
+    @GetMapping("/video/like-list")
+    public VideoListDto getLikeVideoList(){
+        return VideoListDto.builder()
+                .KOR(videoListService.getLikeKorVideoList())
+                .JPN(videoListService.getLikeJpnVideoList())
+                .CHN(videoListService.getLikeChnVideoList())
+                .WES(videoListService.getLikeWesVideoList())
+                .ETC(videoListService.getLikeEtcVideoList())
+                .build();
+    }
 }

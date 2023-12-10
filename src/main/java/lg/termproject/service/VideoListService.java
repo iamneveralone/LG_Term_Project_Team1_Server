@@ -70,4 +70,45 @@ public class VideoListService {
     public List<SimpleVideoDto> getWatchEtcVideoList(){
         return getWatchVideoList("ETC");
     }
+
+    public List<SimpleVideoDto> getLikeVideoList(String category){
+
+        // 로그인한 member 정보 가져오기
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetails userDetails = (UserDetails) principal;
+        String username = userDetails.getUsername();
+
+        Member loginMember = memberRepository.findOneByLoginId(username).get(); // 로그인한 member
+        List<MemberVideo> memberVideoList = memberVideoRepository.findByMemberWithVideo(loginMember);
+
+        List<SimpleVideoDto> watchVideoList = new ArrayList<>();
+
+        for (MemberVideo memberVideo : memberVideoList){
+            if (memberVideo.isLiked() == true && memberVideo.getVideo().getCategory().equals(category)){
+                watchVideoList.add(new SimpleVideoDto(memberVideo.getVideo()));
+            }
+        }
+        return watchVideoList;
+    }
+
+    // 로그인 사용자가 좋아요한 한식 리스트 가져오기
+    public List<SimpleVideoDto> getLikeKorVideoList() {
+        return getLikeVideoList("KOR");
+    }
+
+    public List<SimpleVideoDto> getLikeJpnVideoList() {
+        return getLikeVideoList("JPN");
+    }
+
+    public List<SimpleVideoDto> getLikeChnVideoList() {
+        return getLikeVideoList("CHN");
+    }
+
+    public List<SimpleVideoDto> getLikeWesVideoList() {
+        return getLikeVideoList("WES");
+    }
+
+    public List<SimpleVideoDto> getLikeEtcVideoList() {
+        return getLikeVideoList("ETC");
+    }
 }
