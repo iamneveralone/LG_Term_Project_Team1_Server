@@ -51,7 +51,7 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/signup", "/login").permitAll()
-                        .anyRequest().permitAll())
+                        .anyRequest().authenticated())
 
                 .with(new JwtSecurityConfig(jwtProvider), jwtSecurityConfig -> {});
 
