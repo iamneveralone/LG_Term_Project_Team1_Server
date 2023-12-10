@@ -13,5 +13,7 @@ public interface MemberVideoRepository extends JpaRepository<MemberVideo, Long> 
 
     Optional<MemberVideo> findOneByMemberAndVideo(Member member, Video video);
 
+    boolean existsByMemberAndVideo(Member member, Video video);
+
     Optional<MemberVideo> findOneByVideo(Video video);
 }

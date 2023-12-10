@@ -71,17 +71,29 @@ public class VideoService {
         Member loginMember = memberRepository.findOneByLoginId(username).get(); // 로그인한 member
         Video foundVideo = videoRepository.findOneById(videoId).get(); // videoId에 해당하는 video
 
-        // 로그인한 member와 foundVideo간의 관계를 나타내는 foundMemberVideo
-        MemberVideo foundMemberVideo = memberVideoRepository.findOneByMemberAndVideo(loginMember, foundVideo).get();
+        // 로그인한 멤버가 해당 비디오를 이전에 좋아요 누른 적이 있다면
+        if (memberVideoRepository.existsByMemberAndVideo(loginMember, foundVideo)){
 
-        // 해당 로그인 member가 좋아요 누르지 않은 상태이면
-        if (foundMemberVideo.isLiked() == false){
-            foundMemberVideo.setLiked(true); //
-            foundVideo.setLikes(foundVideo.getLikes() + 1); // 해당 비디오 좋아요 + 1
+            // 로그인한 member와 foundVideo간의 관계를 나타내는 foundMemberVideo
+            MemberVideo foundMemberVideo = memberVideoRepository.findOneByMemberAndVideo(loginMember, foundVideo).get();
+
+            // 해당 로그인 member가 좋아요 누르지 않은 상태이면
+            if (foundMemberVideo.isLiked() == false){
+                foundMemberVideo.setLiked(true);
+                foundVideo.setLikes(foundVideo.getLikes() + 1); // 해당 비디오 좋아요 + 1
+            }
+            else{
+                foundMemberVideo.setLiked(false);
+                foundVideo.setLikes(foundVideo.getLikes() - 1); // 해당 비디오 좋아요 - 1
+            }
         }
         else{
-            foundMemberVideo.setLiked(false);
-            foundVideo.setLikes(foundVideo.getLikes() - 1); // 해당 비디오 좋아요 - 1
+            // member와 video 정보 이용하여 memberVideo 객체 생성
+            MemberVideo memberVideo = MemberVideo.createMemberVideo(loginMember, foundVideo);
+            memberVideo.setLiked(true);
+            memberVideoRepository.save(memberVideo);
+
+            foundVideo.setLikes(foundVideo.getLikes() + 1); // 해당 비디오 좋아요 + 1
         }
     }
 
