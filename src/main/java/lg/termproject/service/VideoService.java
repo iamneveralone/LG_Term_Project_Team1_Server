@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class VideoService {
 
     private final VideoRepository videoRepository;
@@ -55,5 +57,30 @@ public class VideoService {
         memberVideoRepository.save(memberVideo);
 
         return VideoDto.toDto(savedVideo, uploader.getNickname());
+    }
+
+    // 비디오 좋아요 및 취소 기능
+    public void likeVideo(Long videoId){
+
+        // 로그인한 member 정보 가져오기
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetails userDetails = (UserDetails) principal;
+        String username = userDetails.getUsername();
+
+        Member loginMember = memberRepository.findOneByLoginId(username).get(); // 로그인한 member
+        Video foundVideo = videoRepository.findOneById(videoId).get(); // videoId에 해당하는 video
+
+        // 로그인한 member와 foundVideo간의 관계를 나타내는 foundMemberVideo
+        MemberVideo foundMemberVideo = memberVideoRepository.findOneByMemberAndVideo(loginMember, foundVideo).get();
+
+        // 해당 로그인 member가 좋아요 누르지 않은 상태이면
+        if (foundMemberVideo.isLiked() == false){
+            foundMemberVideo.setLiked(true); //
+            foundVideo.setLikes(foundVideo.getLikes() + 1); // 해당 비디오 좋아요 + 1
+        }
+        else{
+            foundMemberVideo.setLiked(false);
+            foundVideo.setLikes(foundVideo.getLikes() - 1); // 해당 비디오 좋아요 - 1
+        }
     }
 }

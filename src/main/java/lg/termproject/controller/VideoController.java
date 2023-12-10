@@ -18,4 +18,10 @@ public class VideoController {
             @Valid @RequestBody VideoDto videoDto) {
         return videoService.uploadVideo(videoDto);
     }
+
+    // 비디오 좋아요 누르기 및 취소
+    @PatchMapping("/video/like/{videoId}")
+    public void likeVideo(@PathVariable Long videoId){
+        videoService.likeVideo(videoId);
+    }
 }
