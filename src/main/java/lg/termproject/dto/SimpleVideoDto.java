@@ -19,6 +19,9 @@ public class SimpleVideoDto {
     private String title;
 
     @NotNull
+    private String menu;
+
+    @NotNull
     private String src;
 
     @NotNull
@@ -27,6 +30,7 @@ public class SimpleVideoDto {
     public SimpleVideoDto(Video video) {
         this.id = video.getId();
         this.title = video.getTitle();
+        this.menu = video.getMenu();
         this.src = video.getSrc();
 
         for (MemberVideo memberVideo : video.getMemberVideos()){
