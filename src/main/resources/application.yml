@@ -1,0 +1,31 @@
+spring:
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://svc.sel5.cloudtype.app:32471/termproject
+#    username: root
+#    password: neveralone
+
+  datasource:
+    driver-class-name: ${DRIVER_CLASS_NAME}
+    url: jdbc:mysql://${DB_URL}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+
+  output:
+    ansi:
+      enabled: always
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+
+jwt:
+  header: Authorization
+  token-validity-in-seconds: ${JWT_VALIDITY} # 86400
