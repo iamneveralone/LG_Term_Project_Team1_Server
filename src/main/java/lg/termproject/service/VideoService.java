@@ -134,11 +134,17 @@ public class VideoService {
 
     // 비디오 상세 정보 가져오기
     public DetailVideoDto getVideoDetail(Long videoId){
-        Video detailVideo = videoRepository.findOneById(videoId).get();
-        MemberVideo memberVideo = memberVideoRepository.findOneByVideo(detailVideo).get();
-        String uploader = memberVideo.getMember().getNickname();
 
-        return DetailVideoDto.toDto(detailVideo, uploader, memberVideo.getLastPlaytime());
+        // 로그인한 member 정보 가져오기
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetails userDetails = (UserDetails) principal;
+        String username = userDetails.getUsername();
+
+        Member loginMember = memberRepository.findOneByLoginId(username).get(); // 로그인한 member
+        Video detailVideo = videoRepository.findOneById(videoId).get();
+        MemberVideo memberVideo = memberVideoRepository.findOneByMemberAndVideo(loginMember, detailVideo).get();
+
+        return DetailVideoDto.toDto(detailVideo, loginMember.getNickname(), memberVideo);
     }
 
     // 로그인 사용자의 비디오 시청 (마지막 시청 시간 저장)

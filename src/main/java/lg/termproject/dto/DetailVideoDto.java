@@ -1,5 +1,6 @@
 package lg.termproject.dto;
 
+import lg.termproject.entity.MemberVideo;
 import lg.termproject.entity.Video;
 import lombok.*;
 
@@ -22,8 +23,9 @@ public class DetailVideoDto {
     private String uploader;
 
     private int lastPlaytime; // 마지막 시청 시간 (초)
+    private boolean isLiked;
 
-    public static DetailVideoDto toDto(Video video, String uploader, int lastPlaytime){
+    public static DetailVideoDto toDto(Video video, String uploader, MemberVideo memberVideo){
         return DetailVideoDto.builder()
                 .id(video.getId())
                 .title(video.getTitle())
@@ -33,7 +35,8 @@ public class DetailVideoDto {
                 .likes(video.getLikes())
                 .runtime(video.getRuntime())
                 .uploader(uploader)
-                .lastPlaytime(lastPlaytime)
+                .lastPlaytime(memberVideo.getLastPlaytime())
+                .isLiked(memberVideo.isLiked())
                 .build();
     }
 }
