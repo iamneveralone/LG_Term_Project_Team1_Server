@@ -1,6 +1,7 @@
 package lg.termproject.controller;
 
 import jakarta.validation.Valid;
+import lg.termproject.dto.CategoryVideoDto;
 import lg.termproject.dto.VideoDto;
 import lg.termproject.service.VideoService;
 import lombok.RequiredArgsConstructor;
@@ -23,5 +24,17 @@ public class VideoController {
     @PatchMapping("/video/like/{videoId}")
     public void likeVideo(@PathVariable Long videoId){
         videoService.likeVideo(videoId);
+    }
+
+    // 카테고리별 비디오 리스트 보여주기
+    @GetMapping("/video/category-list")
+    public CategoryVideoDto getCategoryVideoList(){
+        return CategoryVideoDto.builder()
+                .KOR(videoService.getKorVideoList())
+                .JPN(videoService.getJpnVideoList())
+                .CHN(videoService.getChnVideoList())
+                .WES(videoService.getWesVideoList())
+                .ETC(videoService.getEtcVideoList())
+                .build();
     }
 }

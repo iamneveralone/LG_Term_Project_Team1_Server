@@ -83,4 +83,34 @@ public class VideoService {
             foundVideo.setLikes(foundVideo.getLikes() - 1); // 해당 비디오 좋아요 - 1
         }
     }
+
+    public List<SimpleVideoDto> getKorVideoList(){
+        return videoRepository.findByCategory("KOR").stream()
+                .map(v -> new SimpleVideoDto(v))
+                .collect(toList());
+    }
+
+    public List<SimpleVideoDto> getJpnVideoList(){
+        return videoRepository.findByCategory("JPN").stream()
+                .map(v -> new SimpleVideoDto(v))
+                .collect(toList());
+    }
+
+    public List<SimpleVideoDto> getChnVideoList(){
+        return videoRepository.findByCategory("CHN").stream()
+                .map(v -> new SimpleVideoDto(v))
+                .collect(toList());
+    }
+
+    public List<SimpleVideoDto> getWesVideoList(){
+        return videoRepository.findByCategory("WES").stream()
+                .map(v -> new SimpleVideoDto(v))
+                .collect(toList());
+    }
+
+    public List<SimpleVideoDto> getEtcVideoList(){
+        return videoRepository.findByCategory("ETC").stream()
+                .map(v -> new SimpleVideoDto(v))
+                .collect(toList());
+    }
 }
