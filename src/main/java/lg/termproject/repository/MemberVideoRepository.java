@@ -12,4 +12,6 @@ import java.util.Optional;
 public interface MemberVideoRepository extends JpaRepository<MemberVideo, Long> {
 
     Optional<MemberVideo> findOneByMemberAndVideo(Member member, Video video);
+
+    Optional<MemberVideo> findOneByVideo(Video video);
 }

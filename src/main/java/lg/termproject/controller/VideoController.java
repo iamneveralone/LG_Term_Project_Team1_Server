@@ -2,6 +2,7 @@ package lg.termproject.controller;
 
 import jakarta.validation.Valid;
 import lg.termproject.dto.CategoryVideoDto;
+import lg.termproject.dto.DetailVideoDto;
 import lg.termproject.dto.VideoDto;
 import lg.termproject.service.VideoService;
 import lombok.RequiredArgsConstructor;
@@ -36,5 +37,11 @@ public class VideoController {
                 .WES(videoService.getWesVideoList())
                 .ETC(videoService.getEtcVideoList())
                 .build();
+    }
+
+    // 클릭한 비디오 상세 보여주기
+    @GetMapping("/video/detail/{videoId}")
+    public DetailVideoDto getVideoDetail(@PathVariable Long videoId){
+        return videoService.getVideoDetail(videoId);
     }
 }

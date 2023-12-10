@@ -8,7 +8,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class VideoDto {
+public class DetailVideoDto {
 
     private Long id;
     private String title;
@@ -21,15 +21,19 @@ public class VideoDto {
 
     private String uploader;
 
-    public static VideoDto toDto(Video video, String uploader){
-        return VideoDto.builder()
+    private int lastPlaytime; // 마지막 시청 시간 (초)
+
+    public static DetailVideoDto toDto(Video video, String uploader, int lastPlaytime){
+        return DetailVideoDto.builder()
+                .id(video.getId())
                 .title(video.getTitle())
                 .category(video.getCategory())
                 .menu(video.getMenu())
                 .src(video.getSrc())
-                .uploader(uploader)
                 .likes(video.getLikes())
                 .runtime(video.getRuntime())
+                .uploader(uploader)
+                .lastPlaytime(lastPlaytime)
                 .build();
     }
 }

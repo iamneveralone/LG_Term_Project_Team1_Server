@@ -1,5 +1,6 @@
 package lg.termproject.service;
 
+import lg.termproject.dto.DetailVideoDto;
 import lg.termproject.dto.SimpleVideoDto;
 import lg.termproject.dto.VideoDto;
 import lg.termproject.entity.Member;
@@ -112,5 +113,13 @@ public class VideoService {
         return videoRepository.findByCategory("ETC").stream()
                 .map(v -> new SimpleVideoDto(v))
                 .collect(toList());
+    }
+
+    public DetailVideoDto getVideoDetail(Long videoId){
+        Video detailVideo = videoRepository.findOneById(videoId).get();
+        MemberVideo memberVideo = memberVideoRepository.findOneByVideo(detailVideo).get();
+        String uploader = memberVideo.getMember().getNickname();
+
+        return DetailVideoDto.toDto(detailVideo, uploader, memberVideo.getLastPlaytime());
     }
 }
