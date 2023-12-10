@@ -9,7 +9,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryVideoDto {
+public class VideoListDto {
 
     private List<SimpleVideoDto> KOR;
     private List<SimpleVideoDto> JPN;

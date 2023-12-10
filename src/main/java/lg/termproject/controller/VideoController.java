@@ -1,13 +1,12 @@
 package lg.termproject.controller;
 
 import jakarta.validation.Valid;
-import lg.termproject.dto.CategoryVideoDto;
+import lg.termproject.dto.VideoListDto;
 import lg.termproject.dto.DetailVideoDto;
 import lg.termproject.dto.LastPlaytimeDto;
 import lg.termproject.dto.VideoDto;
 import lg.termproject.service.VideoService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.RequestEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -31,8 +30,8 @@ public class VideoController {
 
     // 카테고리별 비디오 리스트 보여주기
     @GetMapping("/video/category-list")
-    public CategoryVideoDto getCategoryVideoList(){
-        return CategoryVideoDto.builder()
+    public VideoListDto getCategoryVideoList(){
+        return VideoListDto.builder()
                 .KOR(videoService.getKorVideoList())
                 .JPN(videoService.getJpnVideoList())
                 .CHN(videoService.getChnVideoList())
