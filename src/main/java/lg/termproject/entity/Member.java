@@ -28,4 +28,10 @@ public class Member {
     @Builder.Default
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<MemberVideo> memberVideos = new ArrayList<>();
+
+    //== 연관관계 메서드 ==//
+    public void addMemberVideo(MemberVideo memberVideo){
+        memberVideos.add(memberVideo);
+        memberVideo.setMember(this);
+    }
 }

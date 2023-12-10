@@ -1,13 +1,13 @@
 package lg.termproject.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
-@Getter
+@Getter @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -24,4 +24,14 @@ public class Video {
 
     private int likes;
     private int runtime; // 비디오 영상 길이
+
+    @Builder.Default
+    @OneToMany(mappedBy = "video", cascade = CascadeType.ALL)
+    private List<MemberVideo> memberVideos = new ArrayList<>();
+
+    //== 연관관계 메서드 ==//
+    public void addMemberVideo(MemberVideo memberVideo){
+        memberVideos.add(memberVideo);
+        memberVideo.setVideo(this);
+    }
 }
