@@ -34,21 +34,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http
-                .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
-                    @Override
-                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-                        CorsConfiguration config = new CorsConfiguration();
-
-                        config.addAllowedOrigin("*");
-                        config.addAllowedHeader("*");
-                        config.addAllowedMethod("*");
-
-                        /*UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-                        source.registerCorsConfiguration("/**", config);*/
-
-                        return config;
-                    }
-                }))
+                .cors(corsCustomizer -> corsCustomizer.configurationSource(corsConfig.corsConfigurationSource()))
 
                 .csrf(csrf -> csrf.disable())
 
