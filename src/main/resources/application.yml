@@ -29,6 +29,3 @@ logging:
 jwt:
   header: Authorization
   token-validity-in-seconds: ${JWT_VALIDITY} # 86400
-
-server:
-  port: 8081
