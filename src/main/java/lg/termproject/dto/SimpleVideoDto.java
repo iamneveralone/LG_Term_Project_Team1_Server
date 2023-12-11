@@ -27,7 +27,12 @@ public class SimpleVideoDto {
     @NotNull
     private String uploader;
 
-    public SimpleVideoDto(Video video) {
+    private int lastPlaytime;
+    private int runtime;
+
+    private boolean isWatched;
+
+    public SimpleVideoDto(Video video, int lastPlaytime, boolean isWatched) {
         this.id = video.getId();
         this.title = video.getTitle();
         this.menu = video.getMenu();
@@ -38,5 +43,9 @@ public class SimpleVideoDto {
                 this.uploader = memberVideo.getMember().getNickname();
             }
         }
+
+        this.lastPlaytime = lastPlaytime;
+        this.runtime = video.getRuntime();
+        this.isWatched = isWatched;
     }
 }

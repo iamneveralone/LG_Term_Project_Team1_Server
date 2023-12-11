@@ -40,7 +40,7 @@ public class VideoListService {
 
         for (MemberVideo memberVideo : memberVideoList){
             if (memberVideo.isWatched() == true && memberVideo.getVideo().getCategory().equals(category)){
-                watchVideoList.add(new SimpleVideoDto(memberVideo.getVideo()));
+                watchVideoList.add(new SimpleVideoDto(memberVideo.getVideo(), memberVideo.getLastPlaytime(), memberVideo.isWatched()));
             }
         }
         return watchVideoList;
@@ -85,7 +85,7 @@ public class VideoListService {
 
         for (MemberVideo memberVideo : memberVideoList){
             if (memberVideo.isLiked() == true && memberVideo.getVideo().getCategory().equals(category)){
-                watchVideoList.add(new SimpleVideoDto(memberVideo.getVideo()));
+                watchVideoList.add(new SimpleVideoDto(memberVideo.getVideo(), memberVideo.getLastPlaytime(), memberVideo.isWatched()));
             }
         }
         return watchVideoList;

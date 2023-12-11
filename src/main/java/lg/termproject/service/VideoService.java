@@ -97,39 +97,60 @@ public class VideoService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public List<SimpleVideoDto> getVideoList(String category){
+
+        // 로그인한 member 정보 가져오기
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetails userDetails = (UserDetails) principal;
+        String username = userDetails.getUsername();
+
+        Member loginMember = memberRepository.findOneByLoginId(username).get(); // 로그인한 member
+        // List<MemberVideo> memberVideoList = memberVideoRepository.findByMemberWithVideo(loginMember);
+        List<Video> videoList = videoRepository.findByCategory(category);
+
+        List<SimpleVideoDto> resultVideoList = new ArrayList<>();
+
+        for (Video video : videoList){
+            // 만약 로그인한 사용자와 해당 비디오 간의 관계가 있다면
+            if (memberVideoRepository.existsByMemberAndVideo(loginMember, video)){
+                if (video.getCategory().equals(category)) {
+                    MemberVideo memberVideo = memberVideoRepository.findOneByMemberAndVideo(loginMember, video).get();
+                    resultVideoList.add(new SimpleVideoDto(memberVideo.getVideo(), memberVideo.getLastPlaytime(), memberVideo.isWatched()));
+                }
+            }
+            else {
+                if (video.getCategory().equals(category)){
+                    resultVideoList.add(new SimpleVideoDto(video, 0, false));
+                }
+            }
+        }
+        return resultVideoList;
+    }
+
     // 한식 리스트 가져오기
     public List<SimpleVideoDto> getKorVideoList(){
-        return videoRepository.findByCategory("KOR").stream()
-                .map(v -> new SimpleVideoDto(v))
-                .collect(toList());
+        return getVideoList("KOR");
     }
 
     // 일식 리스트 가져오기
     public List<SimpleVideoDto> getJpnVideoList(){
-        return videoRepository.findByCategory("JPN").stream()
-                .map(v -> new SimpleVideoDto(v))
-                .collect(toList());
+        return getVideoList("JPN");
     }
 
     // 중식 리스트 가져오기
     public List<SimpleVideoDto> getChnVideoList(){
-        return videoRepository.findByCategory("CHN").stream()
-                .map(v -> new SimpleVideoDto(v))
-                .collect(toList());
+        return getVideoList("CHN");
     }
 
     // 양식 리스트 가져오기
     public List<SimpleVideoDto> getWesVideoList(){
-        return videoRepository.findByCategory("WES").stream()
-                .map(v -> new SimpleVideoDto(v))
-                .collect(toList());
+        return getVideoList("WES");
     }
 
     // 기타 음식 리스트 가져오기
     public List<SimpleVideoDto> getEtcVideoList(){
-        return videoRepository.findByCategory("ETC").stream()
-                .map(v -> new SimpleVideoDto(v))
-                .collect(toList());
+        return getVideoList("ETC");
     }
 
     // 비디오 상세 정보 가져오기
