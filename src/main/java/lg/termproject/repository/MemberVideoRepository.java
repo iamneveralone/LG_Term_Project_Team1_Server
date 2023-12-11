@@ -24,4 +24,9 @@ public interface MemberVideoRepository extends JpaRepository<MemberVideo, Long> 
     // fetch join 적용
     @Query("SELECT mv FROM MemberVideo mv JOIN FETCH mv.video WHERE mv.member = :member")
     List<MemberVideo> findByMemberWithVideo(@Param("member") Member member);
+
+    @Query("SELECT mv FROM MemberVideo mv " +
+            "JOIN FETCH mv.member m " +
+            "WHERE mv.video = :video")
+    List<MemberVideo> findWithMemberByVideo(@Param("video") Video video);
 }

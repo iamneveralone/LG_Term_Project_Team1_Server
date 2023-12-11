@@ -159,10 +159,23 @@ public class VideoService {
         String username = userDetails.getUsername();
 
         Member loginMember = memberRepository.findOneByLoginId(username).get(); // 로그인한 member
-        Video detailVideo = videoRepository.findOneById(videoId).get();
-        MemberVideo memberVideo = memberVideoRepository.findOneByMemberAndVideo(loginMember, detailVideo).get();
+        Video detailVideo = videoRepository.findOneById(videoId).get(); // 상세 정보를 얻고 싶은 video
 
-        return DetailVideoDto.toDto(detailVideo, loginMember.getNickname(), memberVideo);
+        List<MemberVideo> memberVideoList = memberVideoRepository.findWithMemberByVideo(detailVideo);
+
+        // video와 연관된 memberVideo 리스트 순회하며 해당 video 업로더 찾기
+        for (MemberVideo memberVideo : memberVideoList){
+            if (memberVideo.isUploaded() == true){
+                if (memberVideoRepository.existsByMemberAndVideo(loginMember, detailVideo)){
+                    MemberVideo loginMemberVideo = memberVideoRepository.findOneByMemberAndVideo(loginMember, detailVideo).get();
+                    return DetailVideoDto.toDto(detailVideo, memberVideo.getMember().getNickname(), loginMemberVideo.getLastPlaytime(), loginMemberVideo.isLiked());
+                }
+                else{
+                    return DetailVideoDto.toDto(detailVideo, memberVideo.getMember().getNickname(), 0, false);
+                }
+            }
+        }
+        return DetailVideoDto.toDto(detailVideo, "", 0, false);
     }
 
     // 로그인 사용자의 비디오 시청 (마지막 시청 시간 저장)

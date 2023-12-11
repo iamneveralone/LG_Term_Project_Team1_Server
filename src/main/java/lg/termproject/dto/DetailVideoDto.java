@@ -25,7 +25,7 @@ public class DetailVideoDto {
     private int lastPlaytime; // 마지막 시청 시간 (초)
     private boolean isLiked;
 
-    public static DetailVideoDto toDto(Video video, String uploader, MemberVideo memberVideo){
+    public static DetailVideoDto toDto(Video video, String uploader, int lastPlaytime, boolean isLiked){
         return DetailVideoDto.builder()
                 .id(video.getId())
                 .title(video.getTitle())
@@ -35,8 +35,8 @@ public class DetailVideoDto {
                 .likes(video.getLikes())
                 .runtime(video.getRuntime())
                 .uploader(uploader)
-                .lastPlaytime(memberVideo.getLastPlaytime())
-                .isLiked(memberVideo.isLiked())
+                .lastPlaytime(lastPlaytime)
+                .isLiked(isLiked)
                 .build();
     }
 }
