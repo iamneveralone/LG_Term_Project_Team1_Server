@@ -49,7 +49,7 @@ public class VideoController {
         videoService.watchVideo(videoId, lastPlaytimeDto.getLastPlaytime());
     }
 
-    @GetMapping("/video/search")
+    @PostMapping("/video/search")
     public SearchVideoDto getSearchVideoList(@RequestBody SearchVideoDto searchVideoDto){
         return SearchVideoDto.builder().
                 searchVideoList(videoService.getSearchVideoList(searchVideoDto.getKeyword()))
