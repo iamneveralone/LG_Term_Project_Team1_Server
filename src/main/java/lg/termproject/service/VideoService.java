@@ -1,6 +1,7 @@
 package lg.termproject.service;
 
 import lg.termproject.dto.DetailVideoDto;
+import lg.termproject.dto.SearchVideoDto;
 import lg.termproject.dto.SimpleVideoDto;
 import lg.termproject.dto.VideoDto;
 import lg.termproject.entity.Member;
@@ -17,9 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
-import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
@@ -106,7 +104,6 @@ public class VideoService {
         String username = userDetails.getUsername();
 
         Member loginMember = memberRepository.findOneByLoginId(username).get(); // 로그인한 member
-        // List<MemberVideo> memberVideoList = memberVideoRepository.findByMemberWithVideo(loginMember);
         List<Video> videoList = videoRepository.findByCategory(category);
 
         List<SimpleVideoDto> resultVideoList = new ArrayList<>();
@@ -215,5 +212,30 @@ public class VideoService {
             // memberVideo 저장
             memberVideoRepository.save(memberVideo);
         }
+    }
+
+    public List<SimpleVideoDto> getSearchVideoList(String keyword) {
+
+        // 로그인한 member 정보 가져오기
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetails userDetails = (UserDetails) principal;
+        String username = userDetails.getUsername();
+
+        Member loginMember = memberRepository.findOneByLoginId(username).get(); // 로그인한 member
+        List<Video> videoList = videoRepository.findByTitleContaining(keyword);
+
+        List<SimpleVideoDto> resultVideoList = new ArrayList<>();
+
+        for (Video video : videoList){
+            // 만약 로그인한 사용자와 해당 비디오 간의 관계가 있다면
+            if (memberVideoRepository.existsByMemberAndVideo(loginMember, video)){
+                MemberVideo memberVideo = memberVideoRepository.findOneByMemberAndVideo(loginMember, video).get();
+                resultVideoList.add(new SimpleVideoDto(memberVideo.getVideo(), memberVideo.getLastPlaytime(), memberVideo.isWatched()));
+            }
+            else {
+                resultVideoList.add(new SimpleVideoDto(video, 0, false));
+            }
+        }
+        return resultVideoList;
     }
 }

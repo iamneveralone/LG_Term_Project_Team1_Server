@@ -1,10 +1,7 @@
 package lg.termproject.controller;
 
 import jakarta.validation.Valid;
-import lg.termproject.dto.VideoListDto;
-import lg.termproject.dto.DetailVideoDto;
-import lg.termproject.dto.LastPlaytimeDto;
-import lg.termproject.dto.VideoDto;
+import lg.termproject.dto.*;
 import lg.termproject.service.VideoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -50,5 +47,12 @@ public class VideoController {
     @PostMapping("/video/watch/{videoId}")
     public void watchVideo(@PathVariable Long videoId, @RequestBody LastPlaytimeDto lastPlaytimeDto){
         videoService.watchVideo(videoId, lastPlaytimeDto.getLastPlaytime());
+    }
+
+    @GetMapping("/video/search")
+    public SearchVideoDto getSearchVideoList(@RequestBody SearchVideoDto searchVideoDto){
+        return SearchVideoDto.builder().
+                searchVideoList(videoService.getSearchVideoList(searchVideoDto.getKeyword()))
+                .build();
     }
 }
