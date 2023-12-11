@@ -50,8 +50,8 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/signup", "/login").permitAll()
-                        .anyRequest().authenticated())
+                        .requestMatchers("/video/upload", "/video/like/**", "/video/watch-list", "/video/like-list").authenticated()
+                        .anyRequest().permitAll())
 
                 .with(new JwtSecurityConfig(jwtProvider), jwtSecurityConfig -> {});
 
